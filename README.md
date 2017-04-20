@@ -59,6 +59,13 @@ python test.py --weights trained/vin_16x16.pth --imsize 16 --k 20
 ```bash
 python test.py --weights trained/vin_28x28.pth --imsize 28 --k 36
 ```
+**Flags**: 
+- `weights`: Path to trained weights.
+- `imsize`: The size of input images. One of: [8, 16, 28]
+- `k`: Number of Value Iterations. Recommended: [10 for 8x8, 20 for 16x16, 36 for 28x28]
+- `l_i`: Number of channels in input layer. Default: 2, i.e. obstacles image and goal image.
+- `l_h`: Number of channels in first convolutional layer. Default: 150, described in paper.
+- `l_q`: Number of channels in q layer (~actions) in VI-module. Default: 10, described in paper.
 
 ## Results
 Gridworld | Sample One | Sample Two
