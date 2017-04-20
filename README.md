@@ -3,7 +3,7 @@
 ![Architecture of Value Iteration Network](https://ai2-s2-public.s3.amazonaws.com/figures/2016-11-08/024f01f390ba94cbee81e82e979a65151d20a6fd/3-Figure2-1.png)
 
 ## A quick thank you
-A few others have released really amazing related work which helped inspire and improve my own implementation. It goes without saying that this release would not be nearly as good as it is if it were not for all of the following people:
+A few others have released amazing related work which helped inspire and improve my own implementation. It goes without saying that this release would not be nearly as good if it were not for all of the following:
 * [@avivt](https://github.com/avivt) ([Paper Author](https://arxiv.org/abs/1602.02867), [MATLAB implementation](https://github.com/avivt/VIN))
 * [@zuoxingdong](https://github.com/zuoxingdong) ([Tensorflow implementation](https://github.com/zuoxingdong/VIN_TensorFlow), [Pytorch implementation](https://github.com/zuoxingdong/VIN_PyTorch_Visdom))
 * [@TheAbhiKumar](https://github.com/TheAbhiKumar) ([Tensorflow implementation](https://github.com/TheAbhiKumar/tensorflow-value-iteration-networks))
