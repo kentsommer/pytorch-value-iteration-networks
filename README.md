@@ -15,7 +15,7 @@ Visualization | Sample One | Sample Two
 ## Dependencies
 This repository requires following packages:
 - SciPy >= 0.19.0
-- Python >= 3.6
+- Python >= 2.7
 - Numpy >= 1.12.1
 - PyTorch >= 0.1.10
 - Matplotlib >= 2.0.0
@@ -65,6 +65,14 @@ Dataset size | 8x8 | 16x16 | 28x28
 -- | -- | -- | --
 Train set | 82775 | 720747 | Not-done-yet
 Test set | 14169 | 121490 | Not-done-yet
+
+## Performance: Test Accuracy
+
+**NOTE**: This is the **accuracy on test set**. It is different from the table in the paper, which indicates the **success rate** from rollouts of the learned policy in the environment. 
+
+Test Accuracy | 8x8 | 16x16 | 28x28
+-- | -- | -- | --
+PyTorch | 99.78% | 93.25% | Not-done-yet 
 
 ## Notes
 * This repository includes a full gridworld implementation similar to the [original VIN implementation](https://github.com/avivt/VIN). 
