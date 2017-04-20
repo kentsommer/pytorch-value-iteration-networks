@@ -11,6 +11,7 @@
 Visualization | Sample One | Sample Two
 -- | --- | ---
 8x8 | <img src="results/8x8_2.png" width="300"> | <img src="results/8x8_3.png" width="300">
+16x16 | <img src="results/16x16_1.png" width="300"> | <img src="results/16x16_2.png" width="300">
 
 ## Dependencies
 This repository requires following packages:
