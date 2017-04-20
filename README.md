@@ -2,16 +2,17 @@
 
 ![Architecture of Value Iteration Network](https://ai2-s2-public.s3.amazonaws.com/figures/2016-11-08/024f01f390ba94cbee81e82e979a65151d20a6fd/3-Figure2-1.png)
 
-## VIN key features
-- A fully differentiable neural network with a 'planning' sub-module. 
-- Value Iteration = Conv Layer + Channel-wise Max Pooling
-- Generalize better than reactive policies for new, unseen tasks.
+## A quick thank you
+A few others have released really amazing related work which helped inspire and improve my own implementation. It goes without saying that this release would not be nearly as good as it is if it were not for all of the following people:
+* [@avivt](https://github.com/avivt) ([Paper Author](https://arxiv.org/abs/1602.02867), [MATLAB implementation](https://github.com/avivt/VIN))
+* [@zuoxingdong](https://github.com/zuoxingdong) ([Tensorflow implementation](https://github.com/zuoxingdong/VIN_TensorFlow), [Pytorch implementation](https://github.com/zuoxingdong/VIN_PyTorch_Visdom))
+* [@TheAbhiKumar](https://github.com/TheAbhiKumar) ([Tensorflow implementation](https://github.com/TheAbhiKumar/tensorflow-value-iteration-networks))
+* [@onlytailei](https://github.com/onlytailei) ([Pytorch implementation](https://github.com/onlytailei/Value-Iteration-Networks-PyTorch))
 
-## Results
-Visualization | Sample One | Sample Two
--- | --- | ---
-8x8 | <img src="results/8x8_2.png" width="450"> | <img src="results/8x8_3.png" width="450">
-16x16 | <img src="results/16x16_1.png" width="450"> | <img src="results/16x16_2.png" width="450">
+## Why another VIN implementation? 
+1. The Pytorch VIN model in this repository is, in my opinion, more readable and closer to the original Theano implementation than others I have found (both Tensorflow and Pytorch). 
+2. This is not simply an implementation of the VIN model in Pytorch, it is also a full Python implementation of the gridworld environments as used in the [original MATLAB implementation](https://github.com/avivt/VIN).
+3. Provide a more extensible research base for others to build off of without needing to jump through the possible MATLAB paywall.
 
 ## Dependencies
 This repository requires following packages:
@@ -59,13 +60,19 @@ python test.py --weights trained/vin_16x16.pth --imsize 16 --k 20
 python test.py --weights trained/vin_28x28.pth --imsize 28 --k 36
 ```
 
+## Results
+Gridworld | Sample One | Sample Two
+-- | --- | ---
+8x8 | <img src="results/8x8_2.png" width="450"> | <img src="results/8x8_3.png" width="450">
+16x16 | <img src="results/16x16_1.png" width="450"> | <img src="results/16x16_2.png" width="450">
+
 ## Datasets
 Each data sample consists of an obstacle image and a goal image followed by the (x, y) coordinates of current state in the gridworld. 
 
 Dataset size | 8x8 | 16x16 | 28x28
 -- | -- | -- | --
-Train set | 82775 | 720747 | Not-done-yet
-Test set | 14169 | 121490 | Not-done-yet
+Train set | 82775 | 720747 | 1529584
+Test set | 14169 | 121490 | 251755
 
 ## Performance: Test Accuracy
 
@@ -76,6 +83,5 @@ Test Accuracy | 8x8 | 16x16 | 28x28
 PyTorch | 99.78% | 93.25% | Not-done-yet 
 
 ## Notes
-* This repository includes a full gridworld implementation similar to the [original VIN implementation](https://github.com/avivt/VIN). 
 * The datasets (8x8, 16x16, and 28x28) included in this repository can be reproduced using the script: ```dataset/make_training_data.py```
   * Note that this script is not optimized and runs rather slowly (also uses a lot of memory :D)
