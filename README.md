@@ -81,6 +81,8 @@ Dataset size | 8x8 | 16x16 | 28x28
 Train set | 82775 | 720747 | 1529584
 Test set | 14169 | 121490 | 251755
 
+The datasets (8x8, 16x16, and 28x28) included in this repository can be reproduced using the ```dataset/make_training_data.py``` script. Note that this script is not optimized and runs rather slowly (also uses a lot of memory :D)
+
 ## Performance: Test Accuracy
 
 **NOTE**: This is the **accuracy on test set**. It is different from the table in the paper, which indicates the **success rate** from rollouts of the learned policy in the environment. 
@@ -88,7 +90,3 @@ Test set | 14169 | 121490 | 251755
 Test Accuracy | 8x8 | 16x16 | 28x28
 -- | -- | -- | --
 PyTorch | 99.78% | 93.25% | Not-done-yet 
-
-## Notes
-* The datasets (8x8, 16x16, and 28x28) included in this repository can be reproduced using the script: ```dataset/make_training_data.py```
-  * Note that this script is not optimized and runs rather slowly (also uses a lot of memory :D)
