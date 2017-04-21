@@ -17,7 +17,7 @@ A few others have released amazing related work which helped inspire and improve
 ## Dependencies
 This repository requires following packages:
 - SciPy >= 0.19.0
-- Python >= 2.7
+- Python >= 2.7 (if using Python 3.x: python3-tk should be installed)
 - Numpy >= 1.12.1
 - PyTorch >= 0.1.10
 - Matplotlib >= 2.0.0
