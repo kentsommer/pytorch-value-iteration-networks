@@ -16,7 +16,7 @@ from domains.gridworld import *
 from generators.obstacle_gen import *
 
 
-def main(config, n_domains=5000, max_obs=40, 
+def main(config, n_domains=100, max_obs=30, 
             max_obs_size=None, n_traj=1, n_actions=8):
     # Correct vs total:
     correct, total = 0.0, 0.0
