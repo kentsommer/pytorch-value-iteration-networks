@@ -78,8 +78,8 @@ Each data sample consists of an obstacle image and a goal image followed by the 
 
 Dataset size | 8x8 | 16x16 | 28x28
 -- | -- | -- | --
-Train set | 82775 | 720747 | 1529584
-Test set | 14169 | 121490 | 251755
+Train set | 81337 | 456309 | 1529584
+Test set | 13846 | 77203 | 251755
 
 The datasets (8x8, 16x16, and 28x28) included in this repository can be reproduced using the ```dataset/make_training_data.py``` script. Note that this script is not optimized and runs rather slowly (also uses a lot of memory :D)
 
@@ -89,4 +89,4 @@ The datasets (8x8, 16x16, and 28x28) included in this repository can be reproduc
 
 Test Accuracy | 8x8 | 16x16 | 28x28
 -- | -- | -- | --
-PyTorch | 99.78% | 93.25% | Not-done-yet 
+PyTorch | 99.83% | 94.84% | Not-done-yet 
