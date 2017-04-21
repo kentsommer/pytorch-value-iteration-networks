@@ -1,3 +1,4 @@
+import sys
 import argparse
 
 import matplotlib.pyplot as plt
@@ -15,9 +16,10 @@ from domains.gridworld import *
 from generators.obstacle_gen import *
 
 
-def main(config, n_domains=100, max_obs=10, 
+def main(config, n_domains=5000, max_obs=40, 
             max_obs_size=None, n_traj=1, n_actions=8):
-
+    # Correct vs total:
+    correct, total = 0.0, 0.0
     # Automatic swith of GPU mode if available
     use_GPU = torch.cuda.is_available()
     vin = torch.load(config.weights)
@@ -95,7 +97,15 @@ def main(config, n_domains=100, max_obs=10,
                         pred_traj[j+1:,1] = nc
                         break
                 # Plot optimal and predicted path (also start, end)
-                visualize(G.image.T, states_xy[i], pred_traj)
+                if pred_traj[-1, 0] == goal[0] and pred_traj[-1, 1] == goal[1]:
+                    correct += 1
+                total += 1
+                if config.plot == True:
+                    visualize(G.image.T, states_xy[i], pred_traj)
+        sys.stdout.write("\r" + str(int((float(dom)/n_domains) * 100.0)) + "%")
+        sys.stdout.flush()
+    sys.stdout.write("\n")
+    print('Rollout Accuracy: {:.2f}%'.format(100*(correct/total)))
 
 
 def visualize(dom, states_xy, pred_traj):
@@ -122,6 +132,7 @@ if __name__ == '__main__':
                         type=str, 
                         default='trained/vin_8x8.pth', 
                         help='Path to trained weights')
+    parser.add_argument('--plot', action='store_true', default=False)
     parser.add_argument('--imsize', 
                         type=int, 
                         default=8, 
