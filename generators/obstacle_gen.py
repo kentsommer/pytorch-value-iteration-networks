@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class obstacles:
     """A class for generating obstacles in a domain"""
     def __init__(self, domsize=None, mask=None, size_max=None, 
@@ -14,6 +15,7 @@ class obstacles:
 
 
     def check_mask(self, dom=None):
+        # Ensure goal is in free space
         if dom is not None:
             return np.any(dom[self.mask[0], self.mask[1]])
         else:
@@ -21,12 +23,14 @@ class obstacles:
 
 
     def insert_rect(self, x, y, height, width):
+        # Insert a rectangular obstacle into map
         im_try = np.copy(self.dom)
         im_try[x:x+height, y:y+width] = 1
         return im_try
 
 
     def add_rand_obs(self, obj_type):
+        # Add random (valid) obstacle to map
         if obj_type == "circ":
             print("circ is not yet implemented... sorry")
         elif obj_type == "rect":
@@ -43,6 +47,7 @@ class obstacles:
 
 
     def add_n_rand_obs(self, n):
+        # Add random (valid) obstacles to map
         count = 0
         for i in range(n):
             obj_type = "rect"
@@ -52,6 +57,7 @@ class obstacles:
 
 
     def add_border(self):
+        # Make full outer border an obstacle
         im_try = np.copy(self.dom)
         im_try[0:self.domsize[0], 0] = 1
         im_try[0, 0:self.domsize[1]] = 1
@@ -65,6 +71,7 @@ class obstacles:
 
 
     def get_final(self):
+        # Process obstacle map for domain
         im = np.copy(self.dom)
         im = np.max(im) - im
         im = im / np.max(im)
@@ -72,11 +79,14 @@ class obstacles:
 
 
     def show(self):
+        # Utility function to view obstacle map
         plt.imshow(self.get_final(), cmap='Greys')
         plt.show()
 
 
     def _print(self):
+        # Utility function to view obstacle map
+        #  information
         print("domsize: ", self.domsize)
         print("mask: ", self.mask)
         print("dom: ", self.dom)

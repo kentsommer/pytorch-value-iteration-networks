@@ -22,7 +22,8 @@ def get_stats(loss, predictions, labels):
 
 
 def print_stats(epoch, avg_loss, avg_error, num_batches, time_duration):
-    print(fmt_row(10, [epoch+1, avg_loss/num_batches, avg_error/num_batches, time_duration]))
+    print(fmt_row(10, [epoch+1, avg_loss/num_batches, 
+                    avg_error/num_batches, time_duration]))
 
 
 def print_header():

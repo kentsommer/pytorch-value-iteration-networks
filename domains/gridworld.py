@@ -2,6 +2,7 @@ import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import dijkstra
 
+
 class gridworld:
     """A class for making gridworlds"""
     def __init__(self, image, targetx, targety):
@@ -25,6 +26,8 @@ class gridworld:
 
 
     def set_vals(self):
+        # Setup function to initialize all necessary
+        #  data
         row_obs, col_obs = np.where(self.image == 0)
         row_free, col_free = np.where(self.image != 0)
         self.obstacles = [row_obs, col_obs]
@@ -125,24 +128,28 @@ class gridworld:
 
 
     def get_graph(self):
+        # Returns graph
         G = self.G
         W = self.W[self.W != 0]
         return G, W
 
 
     def get_graph_inv(self):
+        # Returns transpose of graph
         G = self.G.T
         W = self.W.T
         return G, W
 
 
     def val_2_image(self, val):
+        # Zeros for obstacles, val for free space
         im = np.zeros((self.n_row, self.n_col))
         im[self.freespace[0], self.freespace[1]] = val
         return im
 
 
     def get_value_prior(self):
+        # Returns value prior for gridworld
         s_map_col, s_map_row = np.meshgrid(np.arange(0,self.n_col), 
             np.arange(0, self.n_row))
         im = np.sqrt(np.square(s_map_col - self.targety) 
@@ -151,30 +158,37 @@ class gridworld:
 
 
     def get_reward_prior(self):
+        # Returns reward prior for gridworld
         im = -1 * np.ones((self.n_row, self.n_col))
         im[self.targetx, self.targety] = 10
         return im
 
 
     def t_get_reward_prior(self):
+        # Returns reward prior as needed for
+        #  dataset generation
         im = np.zeros((self.n_row, self.n_col))
         im[self.targetx, self.targety] = 10
         return im
 
 
     def get_state_image(self, row, col):
+        # Zeros everywhere except [row,col]
         im = np.zeros((self.n_row, self.n_col))
         im[row, col] = 1
         return im
 
 
     def map_ind_to_state(self, row, col):
+        # Takes [row, col] and maps to a state
         rw = np.where(self.state_map_row == row)
         cl = np.where(self.state_map_col == col)
         return np.intersect1d(rw, cl)[0]
 
 
     def get_coords(self, states):
+        # Given a state or states, returns
+        #  [row,col] pairs for the state(s)
         non_obstacles = np.ravel_multi_index(
             [self.freespace[0], self.freespace[1]], 
             (self.n_row,self.n_col), order='F')
@@ -186,6 +200,7 @@ class gridworld:
 
 
     def rand_choose(self, in_vec):
+        # Samples 
         if len(in_vec.shape) > 1:
             if in_vec.shape[1] == 1:
                 in_vec = in_vec.T
@@ -197,6 +212,8 @@ class gridworld:
 
 
     def next_state_prob(self, s, a):
+        # Gets next state probability for
+        #  a given action (a)
         if hasattr(a, "__iter__"):
             p = np.squeeze(self.P[s, :, a])
         else:
@@ -205,16 +222,22 @@ class gridworld:
 
 
     def sample_next_state(self, s, a):
+        # Gets the next state given the
+        #  current state (s) and an 
+        #  action (a)
         vec = self.next_state_prob(s, a)
         result = self.rand_choose(vec)
         return result
 
 
     def get_size(self):
+        # Returns domain size
         return self.n_row, self.n_col
 
 
     def north(self, row, col):
+        # Returns new [row,col]
+        #  if we take the action
         new_row = np.max([row-1, 0])
         new_col = col
         if self.image[new_row, new_col] == 0:
@@ -224,6 +247,8 @@ class gridworld:
 
 
     def northeast(self, row, col):
+        # Returns new [row,col]
+        #  if we take the action
         new_row = np.max([row - 1, 0])
         new_col = np.min([col + 1, self.n_col - 1])
         if self.image[new_row, new_col] == 0:
@@ -233,6 +258,8 @@ class gridworld:
 
 
     def northwest(self, row, col):
+        # Returns new [row,col]
+        #  if we take the action
         new_row = np.max([row - 1, 0])
         new_col = np.max([col - 1, 0])
         if self.image[new_row, new_col] == 0:
@@ -242,6 +269,8 @@ class gridworld:
 
 
     def south(self, row, col):
+        # Returns new [row,col]
+        #  if we take the action
         new_row = np.min([row + 1, self.n_row - 1])
         new_col = col
         if self.image[new_row, new_col] == 0:
@@ -251,6 +280,8 @@ class gridworld:
 
 
     def southeast(self, row, col):
+        # Returns new [row,col]
+        #  if we take the action
         new_row = np.min([row + 1, self.n_row - 1])
         new_col = np.min([col + 1, self.n_col - 1])
         if self.image[new_row, new_col] == 0:
@@ -260,6 +291,8 @@ class gridworld:
 
 
     def southwest(self, row, col):
+        # Returns new [row,col]
+        #  if we take the action
         new_row = np.min([row + 1, self.n_row - 1])
         new_col = np.max([col - 1, 0])
         if self.image[new_row, new_col] == 0:
@@ -269,6 +302,8 @@ class gridworld:
 
 
     def east(self, row, col):
+        # Returns new [row,col]
+        #  if we take the action
         new_row = row
         new_col = np.min([col + 1, self.n_col - 1])
         if self.image[new_row, new_col] == 0:
@@ -278,6 +313,8 @@ class gridworld:
 
 
     def west(self, row, col):
+        # Returns new [row,col]
+        #  if we take the action
         new_row = row
         new_col = np.max([col - 1, 0])
         if self.image[new_row, new_col] == 0:
@@ -307,6 +344,9 @@ class gridworld:
 
 
 def trace_path(pred, source, target):
+    # traces back shortest path from
+    #  source to target given pred
+    #  (a predicessor list)
     max_len = 1000
     path = np.zeros((max_len, 1))
     i = max_len - 1
@@ -325,6 +365,8 @@ def trace_path(pred, source, target):
 
 
 def sample_trajectory(M, n_states):
+    # Samples trajectories from random nodes
+    #  in our domain (M)
     G, W = M.get_graph_inv()
     N = G.shape[0]
     if N >= n_states:

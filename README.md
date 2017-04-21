@@ -71,7 +71,7 @@ python test.py --weights trained/vin_28x28.pth --imsize 28 --k 36
 ## Results
 Gridworld | Sample One | Sample Two
 -- | --- | ---
-8x8 | <img src="results/8x8_2.png" width="450"> | <img src="results/8x8_3.png" width="450">
+8x8 | <img src="results/8x8_1.png" width="450"> | <img src="results/8x8_2.png" width="450">
 16x16 | <img src="results/16x16_1.png" width="450"> | <img src="results/16x16_2.png" width="450">
 
 ## Datasets

@@ -9,19 +9,24 @@ from generators.obstacle_gen import *
 sys.path.remove('.')
 
 def extract_action(traj):
+    # Given a trajectory, outputs a 1D vector of 
+    #  actions corresponding to the trajectory. 
     n_actions = 8
-    action_vecs = np.asarray([[-1., 0.],[1.,0.],[0.,1.],[0.,-1.],[-1.,1.],[-1.,-1.],[1.,1.],[1.,-1.]])
+    action_vecs = np.asarray([[-1., 0.],[1.,0.],[0.,1.],[0.,-1.],[-1.,1.],
+                              [-1.,-1.],[1.,1.],[1.,-1.]])
     action_vecs[4:] = 1/np.sqrt(2) * action_vecs[4:]
     action_vecs = action_vecs.T
     state_diff = np.diff(traj, axis=0)
-    norm_state_diff = state_diff * np.tile(1/np.sqrt(np.sum(np.square(state_diff), axis=1)), (2, 1)).T
+    norm_state_diff = state_diff * np.tile(1/np.sqrt(np.sum(np.square(
+                                   state_diff), axis=1)), (2, 1)).T
     prj_state_diff = np.dot(norm_state_diff, action_vecs)
     actions_one_hot = np.abs(prj_state_diff -1)<0.00001
     actions = np.dot(actions_one_hot, np.arange(n_actions).T)
     return actions
 
 
-def make_data(dom_size, n_domains, max_obs, max_obs_size, n_traj, state_batch_size):
+def make_data(dom_size, n_domains, max_obs, 
+                max_obs_size, n_traj, state_batch_size):
 
     X_l = []
     S1_l = []
@@ -43,7 +48,6 @@ def make_data(dom_size, n_domains, max_obs, max_obs_size, n_traj, state_batch_si
             continue
         # Get final map
         im = obs.get_final()
-
         # Generate gridworld from obstacle map
         G = gridworld(im, goal[0], goal[1])
         # Get value prior
@@ -59,7 +63,8 @@ def make_data(dom_size, n_domains, max_obs, max_obs_size, n_traj, state_batch_si
                 image = 1 - im
                 # Resize domain and goal images and concate
                 image_data = np.resize(image, (1,1,dom_size[0],dom_size[1]))
-                value_data = np.resize(value_prior, (1,1,dom_size[0],dom_size[1]))
+                value_data = np.resize(value_prior, (1,1,dom_size[0],
+                                                         dom_size[1]))
                 iv_mixed = np.concatenate((image_data, value_data), axis=1)
                 X_current = np.tile(iv_mixed, (ns, 1, 1, 1))
                 # Resize states
@@ -86,18 +91,19 @@ def make_data(dom_size, n_domains, max_obs, max_obs_size, n_traj, state_batch_si
 
 def main(dom_size=[8,8], n_domains=15000, max_obs=30, max_obs_size=None, 
             n_traj=7, state_batch_size=1):
-
+    # Get path to save dataset
     save_path = "dataset/gridworld_{0}x{1}".format(dom_size[0], dom_size[1])
-
+    # Get training data
     print("Now making training data...")    
-    X_out_tr, S1_out_tr, S2_out_tr, Labels_out_tr = make_data(dom_size, n_domains, max_obs, 
-                                                    max_obs_size, n_traj, state_batch_size)
+    X_out_tr, S1_out_tr, S2_out_tr, Labels_out_tr = make_data(
+        dom_size, n_domains, max_obs, max_obs_size, n_traj, state_batch_size)
+    # Get testing data
     print("\nNow making  testing data...")
-    X_out_ts, S1_out_ts, S2_out_ts, Labels_out_ts = make_data(dom_size, n_domains/6, 
-                                                    max_obs, max_obs_size, n_traj, state_batch_size)
-
-    np.savez_compressed(save_path, X_out_tr, S1_out_tr, S2_out_tr, Labels_out_tr, 
-                        X_out_ts, S1_out_ts, S2_out_ts, Labels_out_ts)
+    X_out_ts, S1_out_ts, S2_out_ts, Labels_out_ts = make_data(
+        dom_size, n_domains/6, max_obs, max_obs_size, n_traj, state_batch_size)
+    # Save dataset
+    np.savez_compressed(save_path, X_out_tr, S1_out_tr, S2_out_tr, 
+        Labels_out_tr, X_out_ts, S1_out_ts, S2_out_ts, Labels_out_ts)
     
 
 if __name__ == '__main__':
