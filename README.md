@@ -73,6 +73,7 @@ Gridworld | Sample One | Sample Two
 -- | --- | ---
 8x8 | <img src="results/8x8_1.png" width="450"> | <img src="results/8x8_2.png" width="450">
 16x16 | <img src="results/16x16_1.png" width="450"> | <img src="results/16x16_2.png" width="450">
+28x28 | <img src="results/28x28_1.png" width="450"> | <img src="results/28x28_2.png" width="450">
 
 ## Datasets
 Each data sample consists of an obstacle image and a goal image followed by the (x, y) coordinates of current state in the gridworld. 
@@ -90,4 +91,4 @@ The datasets (8x8, 16x16, and 28x28) included in this repository can be reproduc
 
 Test Accuracy | 8x8 | 16x16 | 28x28
 -- | -- | -- | --
-PyTorch | 99.83% | 94.84% | Not-done-yet 
+PyTorch | 99.83% | 94.84% | 88.54%
