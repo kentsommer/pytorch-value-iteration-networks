@@ -174,6 +174,4 @@ if __name__ == '__main__':
 
     train(net, trainloader, config, criterion, optimizer, use_GPU)
 
-    test(net, testloader, config)
-
     torch.save(net, save_path)

@@ -3,7 +3,7 @@ from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import dijkstra
 
 class gridworld:
-    """A class for generating obstacles in a domain"""
+    """A class for making gridworlds"""
     def __init__(self, image, targetx, targety):
         self.image = image
         self.n_row = image.shape[0]

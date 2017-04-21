@@ -59,6 +59,7 @@ python test.py --weights trained/vin_16x16.pth --imsize 16 --k 20
 ```bash
 python test.py --weights trained/vin_28x28.pth --imsize 28 --k 36
 ```
+
 **Flags**: 
 - `weights`: Path to trained weights.
 - `imsize`: The size of input images. One of: [8, 16, 28]

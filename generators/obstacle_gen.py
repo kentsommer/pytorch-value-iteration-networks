@@ -72,7 +72,7 @@ class obstacles:
 
 
     def show(self):
-    	plt.imshow(self.get_final(), cmap='Greys')
+        plt.imshow(self.get_final(), cmap='Greys')
         plt.show()
 
 
