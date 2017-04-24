@@ -26,7 +26,7 @@ Use `pip` to install the necessary dependencies:
 ```
 pip install -U -r requirements.txt 
 ```
-Note that PyTorch cannot be installed directly from PyPI; refer to http://pytorch.org/ for custom installation instructions specify to your needs. 
+Note that PyTorch cannot be installed directly from PyPI; refer to http://pytorch.org/ for custom installation instructions specific to your needs. 
 ## How to train
 #### 8x8 gridworld
 ```bash
