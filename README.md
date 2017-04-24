@@ -14,14 +14,19 @@ A few others have released amazing related work which helped inspire and improve
 2. This is not simply an implementation of the VIN model in Pytorch, it is also a full Python implementation of the gridworld environments as used in the [original MATLAB implementation](https://github.com/avivt/VIN).
 3. Provide a more extensible research base for others to build off of without needing to jump through the possible MATLAB paywall.
 
-## Dependencies
+## Installation
 This repository requires following packages:
 - [SciPy](https://www.scipy.org/install.html) >= 0.19.0
 - [Python](https://www.python.org/) >= 2.7 (if using Python 3.x: python3-tk should be installed)
 - [Numpy](https://pypi.python.org/pypi/numpy) >= 1.12.1
-- [PyTorch](http://pytorch.org/) >= 0.1.11
 - [Matplotlib](https://matplotlib.org/users/installing.html) >= 2.0.0
+- [PyTorch](http://pytorch.org/) >= 0.1.11
 
+Use `pip` to install the necessary dependencies:
+```
+pip install -U -r requirements.txt 
+```
+Note that PyTorch cannot be installed directly from PyPI; refer to http://pytorch.org/ for custom installation instructions specify to your needs. 
 ## How to train
 #### 8x8 gridworld
 ```bash
