@@ -39,13 +39,13 @@ class VIN(nn.Module):
         h = self.h(X)
         r = self.r(h)
         q = self.q(r)
-        v, _ = torch.max(q, dim=1)
+        v, _ = torch.max(q, dim=1, keepdim=True)
         for i in range(0, config.k - 1):
             q = F.conv2d(torch.cat([r, v], 1), 
                          torch.cat([self.q.weight, self.w], 1),
                          stride=1, 
                          padding=1)
-            v, _ = torch.max(q, dim=1)
+            v, _ = torch.max(q, dim=1, keepdim=True)
 
         q = F.conv2d(torch.cat([r, v], 1), 
                      torch.cat([self.q.weight, self.w], 1),
