@@ -73,7 +73,7 @@ def test(net, testloader, config):
         # Forward pass
         outputs, predictions = net(X, S1, S2, config)
         # Select actions with max scores(logits)
-        _, predicted = torch.max(outputs, dim=1)
+        _, predicted = torch.max(outputs, dim=1, keepdim=True)
         # Unwrap autograd.Variable to Tensor
         predicted = predicted.data
         # Compute test accuracy

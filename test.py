@@ -83,7 +83,7 @@ def main(config, n_domains=100, max_obs=30,
                     X_in, S1_in, S2_in = Variable(X_in), Variable(S1_in), Variable(S2_in)
                     # Forward pass in our neural net
                     _, predictions = vin(X_in, S1_in, S2_in, config)
-                    _, indices = torch.max(predictions.cpu(),1)
+                    _, indices = torch.max(predictions.cpu(), 1, keepdim=True)
                     a = indices.data.numpy()[0][0]
                     # Transform prediction to indices
                     s = G.map_ind_to_state(pred_traj[j-1, 0], pred_traj[j-1, 1])
