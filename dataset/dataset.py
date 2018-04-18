@@ -41,7 +41,7 @@ class GridworldData(data.Dataset):
         """Data format: A list, [train data, test data]
         Each data sample: label, S1, S2, Images, in this order.
         """
-        with np.load(file) as f:
+        with np.load(file, mmap_mode='r') as f:
             if train:
                 images = f['arr_0']
                 S1 = f['arr_1']

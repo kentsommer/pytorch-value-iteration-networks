@@ -32,7 +32,7 @@ class VIN(nn.Module):
                             out_features=8,
                             bias=False)
         self.w = Parameter(torch.zeros(config.l_q,1,3,3), requires_grad=True)
-        self.sm = nn.Softmax()
+        self.sm = nn.Softmax(dim=1)
 
 
     def forward(self, X, S1, S2, config):

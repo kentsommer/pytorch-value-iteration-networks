@@ -89,7 +89,7 @@ def make_data(dom_size, n_domains, max_obs,
     return X_f, S1_f, S2_f, Labels_f
 
 
-def main(dom_size=[8,8], n_domains=15000, max_obs=30, max_obs_size=None, 
+def main(dom_size=[28,28], n_domains=5000, max_obs=50, max_obs_size=2, 
             n_traj=7, state_batch_size=1):
     # Get path to save dataset
     save_path = "dataset/gridworld_{0}x{1}".format(dom_size[0], dom_size[1])

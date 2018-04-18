@@ -77,7 +77,7 @@ def test(net, testloader, config):
         # Unwrap autograd.Variable to Tensor
         predicted = predicted.data
         # Compute test accuracy
-        correct += (predicted == labels).sum()
+        correct += (torch.eq(torch.squeeze(predicted), labels)).sum()
         total += labels.size()[0]
     print('Test Accuracy: {:.2f}%'.format(100*(correct/total)))
 
@@ -147,5 +147,5 @@ if __name__ == '__main__':
     train(net, trainloader, config, criterion, optimizer, use_GPU)
     # Test accuracy
     test(net, testloader, config)
-    # Save the trained model
-    torch.save(net, save_path)
+    # Save the trained model parameters
+    torch.save(net.state_dict(), save_path)

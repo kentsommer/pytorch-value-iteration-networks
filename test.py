@@ -22,9 +22,13 @@ def main(config, n_domains=100, max_obs=30,
     correct, total = 0.0, 0.0
     # Automatic swith of GPU mode if available
     use_GPU = torch.cuda.is_available()
-    vin = torch.load(config.weights)
+    # Instantiate a VIN model
+    vin = VIN(config)
+    # Load model parameters
+    vin.load_state_dict(torch.load(config.weights))
+    # Use GPU if available
     if use_GPU:
-         vin = vin.cuda()
+         vin = vin.cuda() 
 
     for dom in range(n_domains):
         # Randomly select goal position
