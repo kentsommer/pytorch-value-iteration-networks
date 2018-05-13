@@ -5,15 +5,19 @@ import torch.utils.data as data
 
 
 class GridworldData(data.Dataset):
-    def __init__(self, file, imsize, train=True, 
-                    transform=None, target_transform=None):
-        assert file.endswith('.npz') # Must be .npz format
+    def __init__(self,
+                 file,
+                 imsize,
+                 train=True,
+                 transform=None,
+                 target_transform=None):
+        assert file.endswith('.npz')  # Must be .npz format
         self.file = file
         self.imsize = imsize
         self.transform = transform
         self.target_transform = target_transform
-        self.train = train # training set or test set
-        
+        self.train = train  # training set or test set
+
         self.images, self.S1, self.S2, self.labels =  \
                                 self._process(file, self.train)
 
@@ -25,17 +29,15 @@ class GridworldData(data.Dataset):
         # Apply transform if we have one
         if self.transform is not None:
             img = self.transform(img)
-        else: # Internal default transform: Just to Tensor
+        else:  # Internal default transform: Just to Tensor
             img = torch.from_numpy(img)
         # Apply target transform if we have one
         if self.target_transform is not None:
             label = self.target_transform(label)
         return img, int(s1), int(s2), int(label)
-        
 
     def __len__(self):
         return self.images.shape[0]
-        
 
     def _process(self, file, train):
         """Data format: A list, [train data, test data]
@@ -54,9 +56,9 @@ class GridworldData(data.Dataset):
                 labels = f['arr_7']
         # Set proper datatypes
         images = images.astype(np.float32)
-        S1 = S1.astype(int) # (S1, S2) location are integers
+        S1 = S1.astype(int)  # (S1, S2) location are integers
         S2 = S2.astype(int)
-        labels = labels.astype(int) # labels are integers
+        labels = labels.astype(int)  # labels are integers
         # Print number of samples
         if train:
             print("Number of Train Samples: {0}".format(images.shape[0]))

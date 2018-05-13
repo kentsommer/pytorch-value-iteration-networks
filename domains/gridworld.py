@@ -5,6 +5,7 @@ from scipy.sparse.csgraph import dijkstra
 
 class gridworld:
     """A class for making gridworlds"""
+
     def __init__(self, image, targetx, targety):
         self.image = image
         self.n_row = image.shape[0]
@@ -23,7 +24,6 @@ class gridworld:
         self.state_map_col = []
         self.state_map_row = []
         self.set_vals()
-
 
     def set_vals(self):
         # Setup function to initialize all necessary
@@ -48,65 +48,71 @@ class gridworld:
         p_sw = np.zeros((self.n_states, self.n_states))
 
         R = -1 * np.ones((self.n_states, self.n_actions))
-        R[:,4:self.n_actions] = R[:,4:self.n_actions] * np.sqrt(2)
-        target = np.ravel_multi_index([self.targetx,self.targety], 
-            (self.n_row,self.n_col), order='F')
-        R[target,:] = 0
-        
+        R[:, 4:self.n_actions] = R[:, 4:self.n_actions] * np.sqrt(2)
+        target = np.ravel_multi_index(
+            [self.targetx, self.targety], (self.n_row, self.n_col), order='F')
+        R[target, :] = 0
+
         for row in range(0, self.n_row):
             for col in range(0, self.n_col):
 
-                curpos = np.ravel_multi_index([row,col], 
-                    (self.n_row,self.n_col), order='F')
+                curpos = np.ravel_multi_index(
+                    [row, col], (self.n_row, self.n_col), order='F')
 
                 rows, cols = self.neighbors(row, col)
 
-                neighbor_inds = np.ravel_multi_index([rows,cols], 
-                    (self.n_row,self.n_col), order='F')
+                neighbor_inds = np.ravel_multi_index(
+                    [rows, cols], (self.n_row, self.n_col), order='F')
 
-                p_n[curpos, neighbor_inds[0]] = p_n[curpos, 
-                                                    neighbor_inds[0]] + 1
-                p_s[curpos, neighbor_inds[1]] = p_s[curpos, 
-                                                    neighbor_inds[1]] + 1
-                p_e[curpos, neighbor_inds[2]] = p_e[curpos, 
-                                                    neighbor_inds[2]] + 1
-                p_w[curpos, neighbor_inds[3]] = p_w[curpos, 
-                                                    neighbor_inds[3]] + 1
-                p_ne[curpos, neighbor_inds[4]] = p_ne[curpos, 
-                                                    neighbor_inds[4]] + 1
-                p_nw[curpos, neighbor_inds[5]] = p_nw[curpos, 
-                                                    neighbor_inds[5]] + 1
-                p_se[curpos, neighbor_inds[6]] = p_se[curpos, 
-                                                    neighbor_inds[6]] + 1
-                p_sw[curpos, neighbor_inds[7]] = p_sw[curpos, 
-                                                    neighbor_inds[7]] + 1
+                p_n[curpos, neighbor_inds[
+                    0]] = p_n[curpos, neighbor_inds[0]] + 1
+                p_s[curpos, neighbor_inds[
+                    1]] = p_s[curpos, neighbor_inds[1]] + 1
+                p_e[curpos, neighbor_inds[
+                    2]] = p_e[curpos, neighbor_inds[2]] + 1
+                p_w[curpos, neighbor_inds[
+                    3]] = p_w[curpos, neighbor_inds[3]] + 1
+                p_ne[curpos, neighbor_inds[
+                    4]] = p_ne[curpos, neighbor_inds[4]] + 1
+                p_nw[curpos, neighbor_inds[
+                    5]] = p_nw[curpos, neighbor_inds[5]] + 1
+                p_se[curpos, neighbor_inds[
+                    6]] = p_se[curpos, neighbor_inds[6]] + 1
+                p_sw[curpos, neighbor_inds[
+                    7]] = p_sw[curpos, neighbor_inds[7]] + 1
 
-        G = np.logical_or.reduce((p_n, p_s, p_e, p_w, 
-            p_ne, p_nw, p_se, p_sw))
+        G = np.logical_or.reduce((p_n, p_s, p_e, p_w, p_ne, p_nw, p_se, p_sw))
 
-        W = np.maximum(np.maximum(np.maximum(np.maximum(np.maximum(
-            np.maximum(np.maximum(p_n, p_s), p_e), p_w), np.sqrt(2) * p_ne), 
-            np.sqrt(2) * p_nw), np.sqrt(2) * p_se), np.sqrt(2) * p_sw)
+        W = np.maximum(
+            np.maximum(
+                np.maximum(
+                    np.maximum(
+                        np.maximum(np.maximum(np.maximum(p_n, p_s), p_e), p_w),
+                        np.sqrt(2) * p_ne),
+                    np.sqrt(2) * p_nw),
+                np.sqrt(2) * p_se),
+            np.sqrt(2) * p_sw)
 
-        non_obstacles = np.ravel_multi_index([self.freespace[0], 
-            self.freespace[1]], (self.n_row,self.n_col), order='F')
+        non_obstacles = np.ravel_multi_index(
+            [self.freespace[0], self.freespace[1]], (self.n_row, self.n_col),
+            order='F')
 
         non_obstacles = np.sort(non_obstacles)
-        p_n = p_n[non_obstacles,:]
+        p_n = p_n[non_obstacles, :]
         p_n = np.expand_dims(p_n[:, non_obstacles], axis=2)
-        p_s = p_s[non_obstacles,:]
+        p_s = p_s[non_obstacles, :]
         p_s = np.expand_dims(p_s[:, non_obstacles], axis=2)
-        p_e = p_e[non_obstacles,:]
+        p_e = p_e[non_obstacles, :]
         p_e = np.expand_dims(p_e[:, non_obstacles], axis=2)
-        p_w = p_w[non_obstacles,:]
+        p_w = p_w[non_obstacles, :]
         p_w = np.expand_dims(p_w[:, non_obstacles], axis=2)
-        p_ne = p_ne[non_obstacles,:]
+        p_ne = p_ne[non_obstacles, :]
         p_ne = np.expand_dims(p_ne[:, non_obstacles], axis=2)
-        p_nw = p_nw[non_obstacles,:]
+        p_nw = p_nw[non_obstacles, :]
         p_nw = np.expand_dims(p_nw[:, non_obstacles], axis=2)
-        p_se = p_se[non_obstacles,:]
+        p_se = p_se[non_obstacles, :]
         p_se = np.expand_dims(p_se[:, non_obstacles], axis=2)
-        p_sw = p_sw[non_obstacles,:]
+        p_sw = p_sw[non_obstacles, :]
         p_sw = np.expand_dims(p_sw[:, non_obstacles], axis=2)
         G = G[non_obstacles, :]
         G = G[:, non_obstacles]
@@ -114,18 +120,17 @@ class gridworld:
         W = W[:, non_obstacles]
         R = R[non_obstacles, :]
 
-        P = np.concatenate((p_n, p_s, p_e, p_w, 
-            p_ne, p_nw, p_se, p_sw), axis=2)
+        P = np.concatenate(
+            (p_n, p_s, p_e, p_w, p_ne, p_nw, p_se, p_sw), axis=2)
 
         self.G = G
         self.W = W
         self.P = P
         self.R = R
-        state_map_col, state_map_row = np.meshgrid(np.arange(0,self.n_col), 
-            np.arange(0, self.n_row))
+        state_map_col, state_map_row = np.meshgrid(
+            np.arange(0, self.n_col), np.arange(0, self.n_row))
         self.state_map_col = state_map_col.flatten('F')[non_obstacles]
         self.state_map_row = state_map_row.flatten('F')[non_obstacles]
-
 
     def get_graph(self):
         # Returns graph
@@ -133,13 +138,11 @@ class gridworld:
         W = self.W[self.W != 0]
         return G, W
 
-
     def get_graph_inv(self):
         # Returns transpose of graph
         G = self.G.T
         W = self.W.T
         return G, W
-
 
     def val_2_image(self, val):
         # Zeros for obstacles, val for free space
@@ -147,22 +150,20 @@ class gridworld:
         im[self.freespace[0], self.freespace[1]] = val
         return im
 
-
     def get_value_prior(self):
         # Returns value prior for gridworld
-        s_map_col, s_map_row = np.meshgrid(np.arange(0,self.n_col), 
-            np.arange(0, self.n_row))
-        im = np.sqrt(np.square(s_map_col - self.targety) 
-            + np.square(s_map_row - self.targetx))
+        s_map_col, s_map_row = np.meshgrid(
+            np.arange(0, self.n_col), np.arange(0, self.n_row))
+        im = np.sqrt(
+            np.square(s_map_col - self.targety) +
+            np.square(s_map_row - self.targetx))
         return im
-
 
     def get_reward_prior(self):
         # Returns reward prior for gridworld
         im = -1 * np.ones((self.n_row, self.n_col))
         im[self.targetx, self.targety] = 10
         return im
-
 
     def t_get_reward_prior(self):
         # Returns reward prior as needed for
@@ -171,13 +172,11 @@ class gridworld:
         im[self.targetx, self.targety] = 10
         return im
 
-
     def get_state_image(self, row, col):
         # Zeros everywhere except [row,col]
         im = np.zeros((self.n_row, self.n_col))
         im[row, col] = 1
         return im
-
 
     def map_ind_to_state(self, row, col):
         # Takes [row, col] and maps to a state
@@ -185,22 +184,20 @@ class gridworld:
         cl = np.where(self.state_map_col == col)
         return np.intersect1d(rw, cl)[0]
 
-
     def get_coords(self, states):
         # Given a state or states, returns
         #  [row,col] pairs for the state(s)
         non_obstacles = np.ravel_multi_index(
-            [self.freespace[0], self.freespace[1]], 
-            (self.n_row,self.n_col), order='F')
+            [self.freespace[0], self.freespace[1]], (self.n_row, self.n_col),
+            order='F')
         non_obstacles = np.sort(non_obstacles)
         states = states.astype(int)
-        r, c = np.unravel_index(non_obstacles[states], 
-            (self.n_col, self.n_row), order='F')
+        r, c = np.unravel_index(
+            non_obstacles[states], (self.n_col, self.n_row), order='F')
         return r, c
 
-
     def rand_choose(self, in_vec):
-        # Samples 
+        # Samples
         if len(in_vec.shape) > 1:
             if in_vec.shape[1] == 1:
                 in_vec = in_vec.T
@@ -209,7 +206,6 @@ class gridworld:
         x = np.where(q > temp[0:-1])
         y = np.where(q < temp[1:])
         return np.intersect1d(x, y)[0]
-
 
     def next_state_prob(self, s, a):
         # Gets next state probability for
@@ -220,31 +216,27 @@ class gridworld:
             p = np.squeeze(self.P[s, :, a]).T
         return p
 
-
     def sample_next_state(self, s, a):
         # Gets the next state given the
-        #  current state (s) and an 
+        #  current state (s) and an
         #  action (a)
         vec = self.next_state_prob(s, a)
         result = self.rand_choose(vec)
         return result
 
-
     def get_size(self):
         # Returns domain size
         return self.n_row, self.n_col
 
-
     def north(self, row, col):
         # Returns new [row,col]
         #  if we take the action
-        new_row = np.max([row-1, 0])
+        new_row = np.max([row - 1, 0])
         new_col = col
         if self.image[new_row, new_col] == 0:
             new_row = row
             new_col = col
         return new_row, new_col
-
 
     def northeast(self, row, col):
         # Returns new [row,col]
@@ -256,7 +248,6 @@ class gridworld:
             new_col = col
         return new_row, new_col
 
-
     def northwest(self, row, col):
         # Returns new [row,col]
         #  if we take the action
@@ -266,7 +257,6 @@ class gridworld:
             new_row = row
             new_col = col
         return new_row, new_col
-
 
     def south(self, row, col):
         # Returns new [row,col]
@@ -278,7 +268,6 @@ class gridworld:
             new_col = col
         return new_row, new_col
 
-
     def southeast(self, row, col):
         # Returns new [row,col]
         #  if we take the action
@@ -288,7 +277,6 @@ class gridworld:
             new_row = row
             new_col = col
         return new_row, new_col
-
 
     def southwest(self, row, col):
         # Returns new [row,col]
@@ -300,7 +288,6 @@ class gridworld:
             new_col = col
         return new_row, new_col
 
-
     def east(self, row, col):
         # Returns new [row,col]
         #  if we take the action
@@ -311,7 +298,6 @@ class gridworld:
             new_col = col
         return new_row, new_col
 
-
     def west(self, row, col):
         # Returns new [row,col]
         #  if we take the action
@@ -321,7 +307,6 @@ class gridworld:
             new_row = row
             new_col = col
         return new_row, new_col
-
 
     def neighbors(self, row, col):
         # Get valid neighbors in all valid directions
@@ -353,7 +338,7 @@ def trace_path(pred, source, target):
     path[i] = target
     while path[i] != source and i > 0:
         try:
-            path[i-1] = pred[int(path[i])]
+            path[i - 1] = pred[int(path[i])]
             i -= 1
         except Exception as e:
             return []
@@ -372,7 +357,7 @@ def sample_trajectory(M, n_states):
     if N >= n_states:
         rand_ind = np.random.permutation(N)
     else:
-        rand_ind = np.tile(np.random.permutation(N), (1,10))
+        rand_ind = np.tile(np.random.permutation(N), (1, 10))
     init_states = rand_ind[0:n_states].flatten()
     goal_s = M.map_ind_to_state(M.targetx, M.targety)
     states = []
@@ -380,7 +365,7 @@ def sample_trajectory(M, n_states):
     states_one_hot = []
     # Get optimal path from graph
     g_dense = W
-    g_masked = np.ma.masked_values(g_dense,0)
+    g_masked = np.ma.masked_values(g_dense, 0)
     g_sparse = csr_matrix(g_dense)
     d, pred = dijkstra(g_sparse, indices=goal_s, return_predecessors=True)
     for i in range(n_states):
