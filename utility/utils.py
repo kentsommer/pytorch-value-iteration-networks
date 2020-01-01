@@ -19,7 +19,7 @@ def fmt_item(x, l):
 def get_stats(loss, predictions, labels):
     cp = np.argmax(predictions.cpu().data.numpy(), 1)
     error = np.mean(cp != labels.cpu().data.numpy())
-    return loss.data[0], error
+    return loss.item(), error
 
 
 def print_stats(epoch, avg_loss, avg_error, num_batches, time_duration):

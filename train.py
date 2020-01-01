@@ -4,7 +4,6 @@ import numpy as np
 
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
 import torch.optim as optim
 
 import torchvision.transforms as transforms
@@ -15,7 +14,7 @@ from utility.utils import *
 from model import *
 
 
-def train(net, trainloader, config, criterion, optimizer, use_GPU):
+def train(net, trainloader, config, criterion, optimizer):
     print_header()
     for epoch in range(config.epochs):  # Loop over dataset multiple times
         avg_error, avg_loss, num_batches = 0.0, 0.0, 0.0
@@ -25,15 +24,13 @@ def train(net, trainloader, config, criterion, optimizer, use_GPU):
             X, S1, S2, labels = data
             if X.size()[0] != config.batch_size:
                 continue  # Drop those data, if not enough for a batch
-            # Send Tensors to GPU if available
-            if use_GPU:
-                X = X.cuda()
-                S1 = S1.cuda()
-                S2 = S2.cuda()
-                labels = labels.cuda()
-            # Wrap to autograd.Variable
-            X, S1 = Variable(X), Variable(S1)
-            S2, labels = Variable(S2), Variable(labels)
+            # Automaticlly select device to make the code device agnostic 
+            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+            X = X.to(device)
+            S1 = S1.to(device)
+            S2 = S2.to(device)
+            labels = labels.to(device)
+            net = net.to(device)
             # Zero the parameter gradients
             optimizer.zero_grad()
             # Forward pass
@@ -62,14 +59,13 @@ def test(net, testloader, config):
         X, S1, S2, labels = data
         if X.size()[0] != config.batch_size:
             continue  # Drop those data, if not enough for a batch
-        # Send Tensors to GPU if available
-        if use_GPU:
-            X = X.cuda()
-            S1 = S1.cuda()
-            S2 = S2.cuda()
-            labels = labels.cuda()
-        # Wrap to autograd.Variable
-        X, S1, S2 = Variable(X), Variable(S1), Variable(S2)
+        # automaticlly select device, device agnostic 
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        X = X.to(device)
+        S1 = S1.to(device)
+        S2 = S2.to(device)
+        labels = labels.to(device)
+        net = net.to(device)
         # Forward pass
         outputs, predictions = net(X, S1, S2, config)
         # Select actions with max scores(logits)
@@ -83,8 +79,6 @@ def test(net, testloader, config):
 
 
 if __name__ == '__main__':
-    # Automatic swith of GPU mode if available
-    use_GPU = torch.cuda.is_available()
     # Parsing training parameters
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -121,9 +115,6 @@ if __name__ == '__main__':
     save_path = "trained/vin_{0}x{0}.pth".format(config.imsize)
     # Instantiate a VIN model
     net = VIN(config)
-    # Use GPU if available
-    if use_GPU:
-        net = net.cuda()
     # Loss
     criterion = nn.CrossEntropyLoss()
     # Optimizer
@@ -144,7 +135,7 @@ if __name__ == '__main__':
     testloader = torch.utils.data.DataLoader(
         testset, batch_size=config.batch_size, shuffle=False, num_workers=0)
     # Train the model
-    train(net, trainloader, config, criterion, optimizer, use_GPU)
+    train(net, trainloader, config, criterion, optimizer)
     # Test accuracy
     test(net, testloader, config)
     # Save the trained model parameters
