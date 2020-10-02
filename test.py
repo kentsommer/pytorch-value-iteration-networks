@@ -24,15 +24,13 @@ def main(config,
          n_actions=8):
     # Correct vs total:
     correct, total = 0.0, 0.0
-    # Automatic swith of GPU mode if available
-    use_GPU = torch.cuda.is_available()
     # Instantiate a VIN model
-    vin = VIN(config)
+    vin: VIN = VIN(config)
     # Load model parameters
     vin.load_state_dict(torch.load(config.weights))
-    # Use GPU if available
-    if use_GPU:
-        vin = vin.cuda()
+    # Automatically select device to make the code device agnostic
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    vin = vin.to(device)
 
     for dom in range(n_domains):
         # Randomly select goal position
@@ -53,7 +51,7 @@ def main(config,
         im = obs.get_final()
 
         # Generate gridworld from obstacle map
-        G = gridworld(im, goal[0], goal[1])
+        G = GridWorld(im, goal[0], goal[1])
         # Get value prior
         value_prior = G.get_reward_prior()
         # Sample random trajectories to our goal
@@ -83,22 +81,15 @@ def main(config,
                     value_data = value_data.reshape(1, 1, config.imsize,
                                                     config.imsize)
                     # Get inputs as expected by network
-                    X_in = torch.from_numpy(
-                        np.append(im_data, value_data, axis=1)).float()
-                    S1_in = torch.from_numpy(state_data[0].reshape(
-                        [1, 1])).float()
-                    S2_in = torch.from_numpy(state_data[1].reshape(
-                        [1, 1])).float()
-                    # Send Tensors to GPU if available
-                    if use_GPU:
-                        X_in = X_in.cuda()
-                        S1_in = S1_in.cuda()
-                        S2_in = S2_in.cuda()
-                    # Wrap to autograd.Variable
-                    X_in, S1_in, S2_in = Variable(X_in), Variable(
-                        S1_in), Variable(S2_in)
+                    X_in = torch.from_numpy(np.append(im_data, value_data, axis=1))
+                    S1_in = torch.from_numpy(state_data[0].reshape([1, 1]))
+                    S2_in = torch.from_numpy(state_data[1].reshape([1, 1]))
+
+                    # Get input batch
+                    X_in, S1_in, S2_in = [d.float().to(device) for d in [X_in, S1_in, S2_in]]
+
                     # Forward pass in our neural net
-                    _, predictions = vin(X_in, S1_in, S2_in, config)
+                    _, predictions = vin(X_in, S1_in, S2_in, config.k)
                     _, indices = torch.max(predictions.cpu(), 1, keepdim=True)
                     a = indices.data.numpy()[0][0]
                     # Transform prediction to indices
@@ -136,9 +127,9 @@ def visualize(dom, states_xy, pred_traj):
     ax.plot(states_xy[-1, 0], states_xy[-1, 1], '-s', label='Goal')
     legend = ax.legend(loc='upper right', shadow=False)
     for label in legend.get_texts():
-        label.set_fontsize('x-small')  # the legend text size
+        label.set_fontsize('x-small')   # The legend text size
     for label in legend.get_lines():
-        label.set_linewidth(0.5)  # the legend line width
+        label.set_linewidth(0.5)        # The legend line width
     plt.draw()
     plt.waitforbuttonpress(0)
     plt.close(fig)

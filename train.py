@@ -14,27 +14,23 @@ from utility.utils import *
 from model import *
 
 
-def train(net, trainloader, config, criterion, optimizer):
+def train(net: VIN, trainloader, config, criterion, optimizer):
     print_header()
+    # Automatically select device to make the code device agnostic
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     for epoch in range(config.epochs):  # Loop over dataset multiple times
         avg_error, avg_loss, num_batches = 0.0, 0.0, 0.0
         start_time = time.time()
         for i, data in enumerate(trainloader):  # Loop over batches of data
             # Get input batch
-            X, S1, S2, labels = data
+            X, S1, S2, labels = [d.to(device) for d in data]
             if X.size()[0] != config.batch_size:
                 continue  # Drop those data, if not enough for a batch
-            # Automaticlly select device to make the code device agnostic 
-            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-            X = X.to(device)
-            S1 = S1.to(device)
-            S2 = S2.to(device)
-            labels = labels.to(device)
             net = net.to(device)
             # Zero the parameter gradients
             optimizer.zero_grad()
             # Forward pass
-            outputs, predictions = net(X, S1, S2, config)
+            outputs, predictions = net(X, S1, S2, config.k)
             # Loss
             loss = criterion(outputs, labels)
             # Backward pass
@@ -52,22 +48,18 @@ def train(net, trainloader, config, criterion, optimizer):
     print('\nFinished training. \n')
 
 
-def test(net, testloader, config):
+def test(net: VIN, testloader, config):
     total, correct = 0.0, 0.0
+    # Automatically select device, device agnostic
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     for i, data in enumerate(testloader):
         # Get inputs
-        X, S1, S2, labels = data
+        X, S1, S2, labels = [d.to(device) for d in data]
         if X.size()[0] != config.batch_size:
             continue  # Drop those data, if not enough for a batch
-        # automaticlly select device, device agnostic 
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        X = X.to(device)
-        S1 = S1.to(device)
-        S2 = S2.to(device)
-        labels = labels.to(device)
         net = net.to(device)
         # Forward pass
-        outputs, predictions = net(X, S1, S2, config)
+        outputs, predictions = net(X, S1, S2, config.k)
         # Select actions with max scores(logits)
         _, predicted = torch.max(outputs, dim=1, keepdim=True)
         # Unwrap autograd.Variable to Tensor

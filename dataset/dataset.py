@@ -16,7 +16,7 @@ class GridworldData(data.Dataset):
         self.imsize = imsize
         self.transform = transform
         self.target_transform = target_transform
-        self.train = train  # training set or test set
+        self.train = train  # Training set or test set
 
         self.images, self.S1, self.S2, self.labels =  \
                                 self._process(file, self.train)
@@ -58,7 +58,7 @@ class GridworldData(data.Dataset):
         images = images.astype(np.float32)
         S1 = S1.astype(int)  # (S1, S2) location are integers
         S2 = S2.astype(int)
-        labels = labels.astype(int)  # labels are integers
+        labels = labels.astype(int)  # Labels are integers
         # Print number of samples
         if train:
             print("Number of Train Samples: {0}".format(images.shape[0]))

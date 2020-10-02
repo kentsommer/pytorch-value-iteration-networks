@@ -108,3 +108,6 @@ venv.bak/
 
 # pth
 *.pth
+
+# jetbrains project settings
+.idea

@@ -37,32 +37,38 @@ class VIN(nn.Module):
             torch.zeros(config.l_q, 1, 3, 3), requires_grad=True)
         self.sm = nn.Softmax(dim=1)
 
-    def forward(self, X, S1, S2, config):
-        h = self.h(X)
-        r = self.r(h)
-        q = self.q(r)
+    def forward(self, input_view, state_x, state_y, k):
+        """
+        :param input_view: (batch_sz, imsize, imsize)
+        :param state_x: (batch_sz,), 0 <= state_x < imsize
+        :param state_y: (batch_sz,), 0 <= state_y < imsize
+        :param k: number of iterations
+        :return: logits and softmaxed logits
+        """
+        h = self.h(input_view)  # Intermediate output
+        r = self.r(h)           # Reward
+        q = self.q(r)           # Initial Q value from reward
         v, _ = torch.max(q, dim=1, keepdim=True)
-        for i in range(0, config.k - 1):
-            q = F.conv2d(
+
+        def eval_q(r, v):
+            return F.conv2d(
+                # Stack reward with most recent value
                 torch.cat([r, v], 1),
+                # Convolve r->q weights to r, and v->q weights for v. These represent transition probabilities
                 torch.cat([self.q.weight, self.w], 1),
                 stride=1,
                 padding=1)
+
+        # Update q and v values
+        for i in range(k - 1):
+            q = eval_q(r, v)
             v, _ = torch.max(q, dim=1, keepdim=True)
 
-        q = F.conv2d(
-            torch.cat([r, v], 1),
-            torch.cat([self.q.weight, self.w], 1),
-            stride=1,
-            padding=1)
+        q = eval_q(r, v)
+        # q: (batch_sz, l_q, map_size, map_size)
+        batch_sz, l_q, _, _ = q.size()
+        q_out = q[torch.arange(batch_sz), :, state_x.long(), state_y.long()].view(batch_sz, l_q)
 
-        slice_s1 = S1.long().expand(config.imsize, 1, config.l_q, q.size(0))
-        slice_s1 = slice_s1.permute(3, 2, 1, 0)
-        q_out = q.gather(2, slice_s1).squeeze(2)
+        logits = self.fc(q_out)  # q_out to actions
 
-        slice_s2 = S2.long().expand(1, config.l_q, q.size(0))
-        slice_s2 = slice_s2.permute(2, 1, 0)
-        q_out = q_out.gather(2, slice_s2).squeeze(2)
-
-        logits = self.fc(q_out)
         return logits, self.sm(logits)

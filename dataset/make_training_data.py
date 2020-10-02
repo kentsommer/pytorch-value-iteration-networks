@@ -3,6 +3,8 @@ import sys
 import numpy as np
 from dataset import *
 
+import argparse
+
 sys.path.append('.')
 from domains.gridworld import *
 from generators.obstacle_gen import *
@@ -49,7 +51,7 @@ def make_data(dom_size, n_domains, max_obs, max_obs_size, n_traj,
         # Get final map
         im = obs.get_final()
         # Generate gridworld from obstacle map
-        G = gridworld(im, goal[0], goal[1])
+        G = GridWorld(im, goal[0], goal[1])
         # Get value prior
         value_prior = G.t_get_reward_prior()
         # Sample random trajectories to our goal
@@ -89,7 +91,7 @@ def make_data(dom_size, n_domains, max_obs, max_obs_size, n_traj,
     return X_f, S1_f, S2_f, Labels_f
 
 
-def main(dom_size=[28, 28],
+def main(dom_size=(28, 28),
          n_domains=5000,
          max_obs=50,
          max_obs_size=2,
@@ -113,4 +115,17 @@ def main(dom_size=[28, 28],
 
 
 if __name__ == '__main__':
-    main()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--size", "-s", type=int, help="size of the domain", default=28)
+    parser.add_argument("--n_domains", "-nd", type=int, help="number of domains", default=5000)
+    parser.add_argument("--max_obs", "-no", type=int, help="maximum number of obstacles", default=50)
+    parser.add_argument("--max_obs_size", "-os", type=int, help="maximum obstacle size", default=2)
+    parser.add_argument("--n_traj", "-nt", type=int, help="number of trajectories", default=7)
+    parser.add_argument("--state_batch_size", "-bs", type=int, help="state batch size", default=1)
+
+    args = parser.parse_args()
+    size = args.size
+
+    main(dom_size=(size, size), n_domains=args.n_domains, max_obs=args.max_obs,
+         max_obs_size=args.max_obs_size, n_traj=args.n_traj, state_batch_size=args.state_batch_size)
